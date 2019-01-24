@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rest.model.Person;
 import com.rest.service.PersonService;
 
@@ -20,12 +22,30 @@ public class PersonController {
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	@ResponseBody
-	public Hashtable<String, Person> getAll() {
-		return personService.getAll();
+	public String getAll() throws JsonProcessingException {
+		return convertToJson(personService.getAll());
+	}
+
+	private String convertToJson(Hashtable<String, Person> all) throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+		String json = mapper.writeValueAsString(all);
+		System.out.println(json);
+		json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(all);
+		System.out.println(json);
+		return json;
 	}
 
 	@RequestMapping("{id}")
-	public Person getPerson(@PathVariable("id") String id) {
-		return personService.getPerson(id);
+	public String getPerson(@PathVariable("id") String id) throws JsonProcessingException {
+		return convertToJson(personService.getPerson(id));
+	}
+
+	private String convertToJson(Person person) throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+		String json = mapper.writeValueAsString(person);
+		System.out.println(json);
+		json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(person);
+		System.out.println(json);
+		return json;
 	}
 }
